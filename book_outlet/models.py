@@ -4,10 +4,20 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 
 # Create your models here.
+
+class Country(models.Model):
+    name = models.CharField(max_length=80)
+    code = models.CharField(max_length=2)
+
+
 class Address(models.Model):
     street = models.CharField(max_length=80)
     postal_code = models.CharField(max_length=5)
     city = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return f"{self.street} {self.postal_code} {self.city}"
+    
 
 
 class Author(models.Model):
@@ -28,6 +38,7 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     is_best_selling_book = models.BooleanField(default=False)
     slug = models.SlugField(default="", null=False, db_index=True)
+    published_countries = models.ManyToManyField(Country)
 
     def save(self, *args,** kwargs):
         self.slug = slugify(self.title)
